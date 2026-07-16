@@ -1,22 +1,26 @@
-import { Briefcase } from "lucide-react";
-
-import { EmptyState } from "@/components/shared/empty-state";
+import { NewApplicationDialog } from "@/features/applications/components/new-application-dialog";
+import { getBoardApplications } from "@/features/applications/queries/get-board-applications";
+import { KanbanBoard } from "@/features/kanban/components/kanban-board";
 import { PageHeader } from "@/components/shared/page-header";
+import { requireUser } from "@/lib/session";
 
 export const metadata = { title: "Applications" };
 
-export default function ApplicationsPage() {
+export default async function ApplicationsPage() {
+  const user = await requireUser();
+  const applications = await getBoardApplications(user.id);
+
   return (
     <>
       <PageHeader
         title="Applications"
-        description="Your Kanban board of every application in flight."
-      />
-      <EmptyState
-        icon={Briefcase}
-        title="No applications yet"
-        description="The Kanban board lands in Phase 5. Applications you add will move through columns from Wishlist to Offer."
-      />
+        description={`${applications.length} application${
+          applications.length === 1 ? "" : "s"
+        } tracked`}
+      >
+        <NewApplicationDialog />
+      </PageHeader>
+      <KanbanBoard applications={applications} />
     </>
   );
 }
