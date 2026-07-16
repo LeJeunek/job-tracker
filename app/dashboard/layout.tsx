@@ -1,12 +1,21 @@
+import { Sidebar } from "@/components/layout/sidebar";
+import { Topbar } from "@/components/layout/topbar";
 import { requireUser } from "@/lib/session";
 
-// Auth guard for every /dashboard route. The full layout (sidebar,
-// navbar, command palette) lands in Phase 4.
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireUser();
-  return <>{children}</>;
+  const user = await requireUser();
+
+  return (
+    <div className="flex min-h-svh w-full">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Topbar user={user} />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+      </div>
+    </div>
+  );
 }
