@@ -51,6 +51,7 @@ export async function addTask(
     });
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/applications/[id]", "page");
     return { success: true, data: { id: task.id } };
   } catch {
     return { success: false, error: "Failed to add task" };
@@ -73,6 +74,7 @@ export async function toggleTask(input: {
     }
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/applications/[id]", "page");
     return { success: true, data: null };
   } catch {
     return { success: false, error: "Failed to update task" };

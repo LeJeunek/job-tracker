@@ -94,6 +94,7 @@ const columns = [
             variant="ghost"
             size="icon"
             className="size-7"
+            nativeButton={false}
             render={<a href={`mailto:${row.original.email}`} />}
           >
             <Mail className="size-3.5" />
@@ -105,6 +106,7 @@ const columns = [
             variant="ghost"
             size="icon"
             className="size-7"
+            nativeButton={false}
             render={
               <a
                 href={row.original.linkedin}

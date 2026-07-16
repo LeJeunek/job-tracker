@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Draggable } from "@hello-pangea/dnd";
 import { formatDistanceToNow } from "date-fns";
 import { Building2, MapPin, MoreHorizontal, Trash2 } from "lucide-react";
@@ -50,7 +51,12 @@ export function ApplicationCard({
           )}
         >
           <div className="flex items-start justify-between gap-1">
-            <div className="font-medium leading-snug">{application.title}</div>
+            <Link
+              href={`/dashboard/applications/${application.id}`}
+              className="font-medium leading-snug hover:underline"
+            >
+              {application.title}
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={

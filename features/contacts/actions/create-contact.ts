@@ -56,6 +56,7 @@ export async function createContact(
     });
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/applications/[id]", "page");
     revalidatePath("/dashboard/contacts");
     return { success: true, data: { id: contact.id } };
   } catch {

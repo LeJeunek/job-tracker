@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Moon, Search, Sun } from "lucide-react";
+import { Briefcase, Moon, Search, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import type { ApplicationOption } from "@/features/applications/queries/get-application-options";
 import { navItems } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,11 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
-export function CommandPalette() {
+export function CommandPalette({
+  applications = [],
+}: {
+  applications?: ApplicationOption[];
+}) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { setTheme } = useTheme();
@@ -66,6 +71,33 @@ export function CommandPalette() {
               </CommandItem>
             ))}
           </CommandGroup>
+          {applications.length > 0 && (
+            <>
+              <CommandSeparator />
+              <CommandGroup heading="Applications">
+                {applications.map((app) => (
+                  <CommandItem
+                    key={app.id}
+                    value={`${app.title} ${app.company.name}`}
+                    onSelect={() =>
+                      runCommand(() =>
+                        router.push(`/dashboard/applications/${app.id}`)
+                      )
+                    }
+                  >
+                    <Briefcase className="size-4" />
+                    <span className="truncate">
+                      {app.title}
+                      <span className="text-muted-foreground">
+                        {" "}
+                        — {app.company.name}
+                      </span>
+                    </span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          )}
           <CommandSeparator />
           <CommandGroup heading="Theme">
             <CommandItem onSelect={() => runCommand(() => setTheme("light"))}>

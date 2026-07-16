@@ -81,6 +81,7 @@ export async function updateApplication(
     });
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/applications/[id]", "page");
     return { success: true, data: null };
   } catch {
     return { success: false, error: "Failed to update application" };

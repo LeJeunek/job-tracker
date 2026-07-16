@@ -57,6 +57,7 @@ export async function scheduleInterview(
     });
 
     revalidatePath("/dashboard/applications");
+    revalidatePath("/dashboard/applications/[id]", "page");
     return { success: true, data: { id: interview.id } };
   } catch {
     return { success: false, error: "Failed to schedule interview" };

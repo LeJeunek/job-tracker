@@ -5,7 +5,7 @@ import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
 
 import { moveApplication } from "@/features/kanban/actions/move-application";
-import { BOARD_COLUMNS } from "@/features/kanban/columns";
+import { BOARD_COLUMNS, statusLabel } from "@/features/kanban/columns";
 import { StatusColumn } from "@/features/kanban/components/status-column";
 import type { BoardApplication } from "@/features/kanban/types";
 import type { ApplicationStatus } from "@/lib/generated/prisma/enums";
@@ -76,6 +76,25 @@ export function KanbanBoard({
       if (!result.success) {
         setColumns(previous);
         toast.error(result.error);
+        return;
+      }
+      if (from !== to) {
+        toast.success(`Moved to ${statusLabel(to)}`, {
+          action: {
+            label: "Undo",
+            onClick: () => {
+              setColumns(previous);
+              startTransition(async () => {
+                const undo = await moveApplication({
+                  id: draggableId,
+                  status: from,
+                  index: source.index,
+                });
+                if (!undo.success) toast.error(undo.error);
+              });
+            },
+          },
+        });
       }
     });
   }
