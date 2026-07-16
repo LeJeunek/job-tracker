@@ -2,11 +2,20 @@
 
 import { Draggable } from "@hello-pangea/dnd";
 import { formatDistanceToNow } from "date-fns";
-import { Building2, MapPin } from "lucide-react";
+import { Building2, MapPin, MoreHorizontal, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
+import { deleteApplication } from "@/features/applications/actions/delete-application";
 import { PRIORITY_STYLES } from "@/features/kanban/columns";
 import type { BoardApplication } from "@/features/kanban/types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 function formatSalary(app: BoardApplication) {
@@ -40,7 +49,41 @@ export function ApplicationCard({
             snapshot.isDragging && "shadow-lg ring-2 ring-ring"
           )}
         >
-          <div className="font-medium leading-snug">{application.title}</div>
+          <div className="flex items-start justify-between gap-1">
+            <div className="font-medium leading-snug">{application.title}</div>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="-mr-1 -mt-1 size-6 shrink-0"
+                  />
+                }
+              >
+                <MoreHorizontal className="size-4" />
+                <span className="sr-only">Application actions</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={async () => {
+                    const result = await deleteApplication({
+                      id: application.id,
+                    });
+                    if (result.success) {
+                      toast.success("Application deleted");
+                    } else {
+                      toast.error(result.error);
+                    }
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <Building2 className="size-3.5 shrink-0" />
             <span className="truncate">{application.company.name}</span>

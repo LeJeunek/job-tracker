@@ -9,8 +9,8 @@ const optionalInt = z.preprocess((value) => {
 }, z.number().int().min(0).optional());
 
 export const applicationSchema = z.object({
-  title: z.string().min(1, "Job title is required").max(200),
-  companyName: z.string().min(1, "Company is required").max(200),
+  title: z.string().trim().min(1, "Job title is required").max(200),
+  companyName: z.string().trim().min(1, "Company is required").max(200),
   status: z.enum(ApplicationStatus),
   priority: z.enum(Priority),
   location: z.string().max(200).optional(),

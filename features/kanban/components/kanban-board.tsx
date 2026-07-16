@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { toast } from "sonner";
 
@@ -28,14 +28,18 @@ export function KanbanBoard({
 }: {
   applications: BoardApplication[];
 }) {
-  const initial = useMemo(() => groupByStatus(applications), [applications]);
-  const [columns, setColumns] = useState<ColumnMap>(initial);
+  const [columns, setColumns] = useState<ColumnMap>(() =>
+    groupByStatus(applications)
+  );
+  const [prevApplications, setPrevApplications] = useState(applications);
   const [, startTransition] = useTransition();
 
-  // Adopt fresh server data after revalidation.
-  useEffect(() => {
+  // Adopt fresh server data after revalidation (state-during-render
+  // pattern; see react.dev "You Might Not Need an Effect").
+  if (prevApplications !== applications) {
+    setPrevApplications(applications);
     setColumns(groupByStatus(applications));
-  }, [applications]);
+  }
 
   function onDragEnd(result: DropResult) {
     const { source, destination, draggableId } = result;
