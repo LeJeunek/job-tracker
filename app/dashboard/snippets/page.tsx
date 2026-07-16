@@ -1,22 +1,24 @@
-import { NotebookText } from "lucide-react";
-
-import { EmptyState } from "@/components/shared/empty-state";
+import { SnippetDialog } from "@/features/snippets/components/snippet-dialog";
+import { SnippetVault } from "@/features/snippets/components/snippet-vault";
+import { getSnippets } from "@/features/snippets/queries/get-snippets";
 import { PageHeader } from "@/components/shared/page-header";
+import { requireUser } from "@/lib/session";
 
 export const metadata = { title: "Snippets" };
 
-export default function SnippetsPage() {
+export default async function SnippetsPage() {
+  const user = await requireUser();
+  const snippets = await getSnippets(user.id);
+
   return (
     <>
       <PageHeader
         title="Snippet Vault"
         description="Reusable answers, intros, and templates — one click to copy."
-      />
-      <EmptyState
-        icon={NotebookText}
-        title="No snippets yet"
-        description="The vault opens in Phase 9 with markdown editing, tags, search, and favorites."
-      />
+      >
+        <SnippetDialog />
+      </PageHeader>
+      <SnippetVault snippets={snippets} />
     </>
   );
 }
