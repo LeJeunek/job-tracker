@@ -1,12 +1,7 @@
 import { z } from "zod";
 
 import { ApplicationStatus, Priority } from "@/lib/generated/prisma/enums";
-
-const optionalInt = z.preprocess((value) => {
-  if (value === "" || value === null || value === undefined) return undefined;
-  const n = Number(value);
-  return Number.isNaN(n) ? undefined : n;
-}, z.number().int().min(0).optional());
+import { optionalInt } from "@/lib/validations";
 
 export const applicationSchema = z.object({
   title: z.string().trim().min(1, "Job title is required").max(200),
