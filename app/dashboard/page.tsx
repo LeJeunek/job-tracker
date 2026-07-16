@@ -1,14 +1,17 @@
+import { MetricCard } from "@/features/dashboard/components/metric-card";
+import { PipelineBreakdown } from "@/features/dashboard/components/pipeline-breakdown";
+import { getDashboardMetrics } from "@/features/dashboard/queries/get-dashboard-metrics";
 import { PageHeader } from "@/components/shared/page-header";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { requireUser } from "@/lib/session";
+
+function percent(value: number | null) {
+  if (value === null) return "—";
+  return `${Math.round(value * 100)}%`;
+}
 
 export default async function DashboardPage() {
   const user = await requireUser();
+  const metrics = await getDashboardMetrics(user.id);
 
   return (
     <>
@@ -17,21 +20,34 @@ export default async function DashboardPage() {
         description="An overview of your job search at a glance."
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {["Applications", "Interviews", "Offers", "Response Rate"].map(
-          (metric) => (
-            <Card key={metric}>
-              <CardHeader>
-                <CardDescription>{metric}</CardDescription>
-                <CardTitle className="text-3xl">—</CardTitle>
-              </CardHeader>
-            </Card>
-          )
-        )}
+        <MetricCard
+          label="Applications"
+          value={String(metrics.totalApplications)}
+          hint={`+${metrics.applicationsThisWeek} this week`}
+        />
+        <MetricCard
+          label="Interviews"
+          value={String(metrics.interviewCount)}
+          hint={
+            metrics.avgDaysToInterview !== null
+              ? `avg ${metrics.avgDaysToInterview.toFixed(1)} days to first interview`
+              : "no interviews scheduled yet"
+          }
+        />
+        <MetricCard
+          label="Offers"
+          value={String(metrics.offerCount)}
+          hint={`offer rate ${percent(metrics.offerRate)}`}
+        />
+        <MetricCard
+          label="Response rate"
+          value={percent(metrics.responseRate)}
+          hint={`of ${metrics.appliedCount} applied`}
+        />
       </div>
-      <p className="text-muted-foreground mt-6 text-sm">
-        Metrics light up in Phase 7, once applications are flowing through the
-        Kanban board.
-      </p>
+      <div className="mt-4">
+        <PipelineBreakdown byStatus={metrics.byStatus} />
+      </div>
     </>
   );
 }
