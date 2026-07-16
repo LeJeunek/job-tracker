@@ -37,6 +37,18 @@ import { Textarea } from "@/components/ui/textarea";
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
 
+// Base UI SelectValue renders the raw value unless the root gets an
+// items map of value -> label.
+const STATUS_ITEMS = Object.fromEntries(
+  BOARD_COLUMNS.map((column) => [column.status, column.label])
+);
+const PRIORITY_ITEMS = Object.fromEntries(
+  PRIORITIES.map((priority) => [
+    priority,
+    priority.charAt(0) + priority.slice(1).toLowerCase(),
+  ])
+);
+
 export function NewApplicationDialog() {
   const [open, setOpen] = useState(false);
 
@@ -123,7 +135,11 @@ export function NewApplicationDialog() {
                 control={control}
                 name="status"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    items={STATUS_ITEMS}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
@@ -144,15 +160,18 @@ export function NewApplicationDialog() {
                 control={control}
                 name="priority"
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    items={PRIORITY_ITEMS}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {PRIORITIES.map((priority) => (
                         <SelectItem key={priority} value={priority}>
-                          {priority.charAt(0) +
-                            priority.slice(1).toLowerCase()}
+                          {PRIORITY_ITEMS[priority]}
                         </SelectItem>
                       ))}
                     </SelectContent>
