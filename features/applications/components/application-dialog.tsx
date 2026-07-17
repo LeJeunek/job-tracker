@@ -2,18 +2,22 @@
 
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Pencil, Plus } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { z } from "zod";
 
 import { createApplication } from "@/features/applications/actions/create-application";
+import { updateApplication } from "@/features/applications/actions/update-application";
 import {
   applicationSchema,
   type ApplicationInput,
 } from "@/features/applications/schemas/application-schema";
 import { BOARD_COLUMNS } from "@/features/kanban/columns";
+import type {
+  ApplicationStatus,
+  Priority,
+} from "@/lib/generated/prisma/enums";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -49,8 +53,28 @@ const PRIORITY_ITEMS = Object.fromEntries(
   ])
 );
 
-export function NewApplicationDialog() {
+export type EditableApplication = {
+  id: string;
+  title: string;
+  status: ApplicationStatus;
+  priority: Priority;
+  location: string | null;
+  remote: boolean;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  applicationUrl: string | null;
+  source: string | null;
+  notes: string | null;
+  companyName: string;
+};
+
+export function ApplicationDialog({
+  application,
+}: {
+  application?: EditableApplication;
+}) {
   const [open, setOpen] = useState(false);
+  const editing = Boolean(application);
 
   const {
     register,
@@ -58,30 +82,30 @@ export function NewApplicationDialog() {
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<
-    z.input<typeof applicationSchema>,
-    unknown,
-    ApplicationInput
-  >({
+  } = useForm<z.input<typeof applicationSchema>, unknown, ApplicationInput>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
-      title: "",
-      companyName: "",
-      status: "WISHLIST",
-      priority: "MEDIUM",
-      location: "",
-      remote: false,
-      applicationUrl: "",
-      source: "",
-      notes: "",
+      title: application?.title ?? "",
+      companyName: application?.companyName ?? "",
+      status: application?.status ?? "WISHLIST",
+      priority: application?.priority ?? "MEDIUM",
+      location: application?.location ?? "",
+      remote: application?.remote ?? false,
+      salaryMin: application?.salaryMin ?? undefined,
+      salaryMax: application?.salaryMax ?? undefined,
+      applicationUrl: application?.applicationUrl ?? "",
+      source: application?.source ?? "",
+      notes: application?.notes ?? "",
     },
   });
 
   async function onSubmit(values: ApplicationInput) {
-    const result = await createApplication(values);
+    const result = application
+      ? await updateApplication({ ...values, id: application.id })
+      : await createApplication(values);
     if (result.success) {
-      toast.success("Application added");
-      reset();
+      toast.success(editing ? "Application updated" : "Application added");
+      if (!editing) reset();
       setOpen(false);
     } else {
       toast.error(result.error);
@@ -90,15 +114,26 @@ export function NewApplicationDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
-        <Plus className="size-4" />
-        Add application
-      </DialogTrigger>
+      {editing ? (
+        <DialogTrigger render={<Button variant="outline" size="sm" />}>
+          <Pencil className="size-3.5" />
+          Edit
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger render={<Button />}>
+          <Plus className="size-4" />
+          Add application
+        </DialogTrigger>
+      )}
       <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add application</DialogTitle>
+          <DialogTitle>
+            {editing ? "Edit application" : "Add application"}
+          </DialogTitle>
           <DialogDescription>
-            Track a new job application on your board.
+            {editing
+              ? "Changes are logged on the timeline."
+              : "Track a new job application on your board."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -275,7 +310,7 @@ export function NewApplicationDialog() {
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-              Add application
+              {editing ? "Save changes" : "Add application"}
             </Button>
           </div>
         </form>

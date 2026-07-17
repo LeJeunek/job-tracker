@@ -1,6 +1,8 @@
 import { MetricCard } from "@/features/dashboard/components/metric-card";
 import { PipelineBreakdown } from "@/features/dashboard/components/pipeline-breakdown";
+import { WeeklyChart } from "@/features/dashboard/components/weekly-chart";
 import { getDashboardMetrics } from "@/features/dashboard/queries/get-dashboard-metrics";
+import { getWeeklyApplications } from "@/features/dashboard/queries/get-weekly-applications";
 import { PageHeader } from "@/components/shared/page-header";
 import { requireUser } from "@/lib/session";
 
@@ -11,7 +13,10 @@ function percent(value: number | null) {
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const metrics = await getDashboardMetrics(user.id);
+  const [metrics, weeks] = await Promise.all([
+    getDashboardMetrics(user.id),
+    getWeeklyApplications(user.id),
+  ]);
 
   return (
     <>
@@ -45,7 +50,8 @@ export default async function DashboardPage() {
           hint={`of ${metrics.appliedCount} applied`}
         />
       </div>
-      <div className="mt-4">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <WeeklyChart weeks={weeks} />
         <PipelineBreakdown byStatus={metrics.byStatus} />
       </div>
     </>

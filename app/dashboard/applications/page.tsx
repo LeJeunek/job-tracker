@@ -1,4 +1,4 @@
-import { NewApplicationDialog } from "@/features/applications/components/new-application-dialog";
+import { ApplicationDialog } from "@/features/applications/components/application-dialog";
 import { getBoardApplications } from "@/features/applications/queries/get-board-applications";
 import { KanbanBoard } from "@/features/kanban/components/kanban-board";
 import { PageHeader } from "@/components/shared/page-header";
@@ -18,7 +18,7 @@ export default async function ApplicationsPage() {
           applications.length === 1 ? "" : "s"
         } tracked`}
       >
-        <NewApplicationDialog />
+        <ApplicationDialog />
       </PageHeader>
       <KanbanBoard applications={applications} />
     </>

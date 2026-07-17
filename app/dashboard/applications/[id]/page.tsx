@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { ArrowLeft, Building2, ExternalLink, MapPin } from "lucide-react";
 
 import { ActivityTimeline } from "@/features/applications/components/activity-timeline";
+import { ApplicationDialog } from "@/features/applications/components/application-dialog";
 import { InterviewsCard } from "@/features/applications/components/interviews-card";
 import { TasksCard } from "@/features/applications/components/tasks-card";
 import { getApplicationDetail } from "@/features/applications/queries/get-application-detail";
@@ -82,6 +83,22 @@ export default async function ApplicationDetailPage({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
+          <ApplicationDialog
+            application={{
+              id: application.id,
+              title: application.title,
+              status: application.status,
+              priority: application.priority,
+              location: application.location,
+              remote: application.remote,
+              salaryMin: application.salaryMin,
+              salaryMax: application.salaryMax,
+              applicationUrl: application.applicationUrl,
+              source: application.source,
+              notes: application.notes,
+              companyName: application.company.name,
+            }}
+          />
           <Badge variant="secondary">{statusLabel(application.status)}</Badge>
           <Badge
             className={cn(
