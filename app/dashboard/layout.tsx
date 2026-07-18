@@ -12,11 +12,13 @@ export default async function DashboardLayout({
   const applications = await getApplicationOptions(user.id);
 
   return (
-    <div className="flex min-h-svh w-full">
+    <div className="flex h-svh w-full overflow-hidden">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar user={user} applications={applications} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 md:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

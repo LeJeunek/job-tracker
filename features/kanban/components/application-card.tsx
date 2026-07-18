@@ -46,14 +46,14 @@ export function ApplicationCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={cn(
-            "bg-card space-y-2 rounded-md border p-3 text-sm shadow-sm transition-shadow",
+            "bg-card space-y-2.5 rounded-lg border p-3.5 text-sm shadow-sm transition-shadow",
             snapshot.isDragging && "shadow-lg ring-2 ring-ring"
           )}
         >
           <div className="flex items-start justify-between gap-1">
             <Link
               href={`/dashboard/applications/${application.id}`}
-              className="font-medium leading-snug hover:underline"
+              className="text-[0.9375rem] font-medium leading-snug hover:underline"
             >
               {application.title}
             </Link>

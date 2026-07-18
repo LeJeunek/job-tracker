@@ -11,7 +11,7 @@ export default async function ApplicationsPage() {
   const applications = await getBoardApplications(user.id);
 
   return (
-    <>
+    <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader
         title="Applications"
         description={`${applications.length} application${
@@ -21,6 +21,6 @@ export default async function ApplicationsPage() {
         <ApplicationDialog />
       </PageHeader>
       <KanbanBoard applications={applications} />
-    </>
+    </div>
   );
 }

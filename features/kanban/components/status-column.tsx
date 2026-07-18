@@ -15,9 +15,9 @@ export function StatusColumn({
   applications: BoardApplication[];
 }) {
   return (
-    <div className="bg-muted/40 flex w-72 shrink-0 flex-col rounded-lg border">
-      <div className="flex items-center gap-2 px-3 py-2.5">
-        <span className={cn("size-2 rounded-full", column.dot)} />
+    <div className="bg-muted/40 flex h-full max-h-full w-[88vw] shrink-0 snap-start flex-col rounded-lg border sm:w-80 2xl:w-96">
+      <div className="flex shrink-0 items-center gap-2 px-3 py-3">
+        <span className={cn("size-2.5 rounded-full", column.dot)} />
         <span className="text-sm font-medium">{column.label}</span>
         <span className="text-muted-foreground ml-auto text-xs tabular-nums">
           {applications.length}
@@ -29,7 +29,7 @@ export function StatusColumn({
             ref={provided.innerRef}
             {...provided.droppableProps}
             className={cn(
-              "flex min-h-24 flex-1 flex-col gap-2 p-2 pt-0 transition-colors",
+              "board-scroll flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto p-2.5 pt-0 transition-colors",
               snapshot.isDraggingOver && "bg-accent/50"
             )}
           >

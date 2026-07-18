@@ -128,3 +128,25 @@
     @apply font-sans;
   }
 }
+
+/* Smooth, slim scrollbars for the Kanban board and column lists. */
+.board-scroll {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.board-scroll::-webkit-scrollbar {
+  height: 10px;
+  width: 8px;
+}
+.board-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+.board-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+.board-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

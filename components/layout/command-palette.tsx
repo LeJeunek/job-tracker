@@ -57,7 +57,9 @@ export function CommandPalette({
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search…" />
+        {/* Base UI's dialog grabs initial focus; without autoFocus typing
+            lands on the popup instead of the search input. */}
+        <CommandInput autoFocus placeholder="Type a command or search…" />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Navigation">
